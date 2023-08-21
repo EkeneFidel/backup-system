@@ -1,4 +1,4 @@
-import { User } from "../model/user.model";
+import { User, UserRole } from "../model/user.model";
 import { UserRepo } from "../repository/user.repository";
 import Authentication from "../utils/auth.utils";
 
@@ -13,7 +13,12 @@ interface Signup {
 
 interface AuthInterface {
   login(email: string, password: string): Promise<Login>;
-  signup(email: string, password: string, fullname: string): Promise<Signup>;
+  signup(
+    email: string,
+    password: string,
+    fullname: string,
+    role?: UserRole
+  ): Promise<Signup>;
 }
 
 export class AuthService implements AuthInterface {
@@ -43,9 +48,10 @@ export class AuthService implements AuthInterface {
   async signup(
     email: string,
     password: string,
-    fullname: string
+    fullname: string,
+    role?: UserRole
   ): Promise<Signup> {
-    const emailExists = await new UserRepo().findByEmail(email);
+    const emailExists = await new UserRepo().checkEmail(email);
 
     if (emailExists) {
       throw new Error("User with this email already exists");
@@ -55,6 +61,7 @@ export class AuthService implements AuthInterface {
     new_user.fullname = fullname;
     new_user.email = email;
     new_user.password = hashedPassword;
+    new_user.role = role || UserRole.USER;
 
     let final_user = await new UserRepo().save(new_user);
 

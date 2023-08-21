@@ -42,6 +42,7 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "fullname", void 0);
 __decorate([
+    sequelize_typescript_1.IsEmail,
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.STRING,
         field: User_1.USER_EMAIL,
@@ -56,9 +57,9 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
 __decorate([
+    (0, sequelize_typescript_1.AllowNull)(false),
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.ENUM(...Object.values(UserRole)),
-        allowNull: false,
         field: User_1.USER_ROLE,
         defaultValue: UserRole.USER,
     }),

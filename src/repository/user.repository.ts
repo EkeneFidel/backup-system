@@ -5,6 +5,7 @@ interface UserInterface {
   getById(userId: User): Promise<User>;
   getAll(): Promise<User[]>;
   findByEmail(email: string): Promise<User>;
+  checkEmail(email: string): Promise<Boolean>;
 }
 
 export class UserRepo implements UserInterface {
@@ -14,6 +15,7 @@ export class UserRepo implements UserInterface {
         fullname: user.fullname,
         email: user.email,
         password: user.password,
+        role: user.role,
       });
       return final_user;
     } catch (error) {
@@ -35,14 +37,14 @@ export class UserRepo implements UserInterface {
 
       return user;
     } catch (error) {
-      throw new Error("Method not implemented.");
+      throw new Error("User not found");
     }
   }
   async getAll(): Promise<User[]> {
     try {
       return await User.findAll();
     } catch (error) {
-      throw new Error("Method not implemented.");
+      throw new Error("No users found");
     }
   }
   async findByEmail(email: string): Promise<User> {
@@ -58,7 +60,24 @@ export class UserRepo implements UserInterface {
       }
       return user;
     } catch (error) {
-      throw new Error("Method not implemented.");
+      throw new Error("User not found");
+    }
+  }
+
+  async checkEmail(email: string): Promise<Boolean> {
+    try {
+      const user = await User.findOne({
+        where: {
+          email: email,
+        },
+      });
+
+      if (user) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      throw new Error("User not found");
     }
   }
 }

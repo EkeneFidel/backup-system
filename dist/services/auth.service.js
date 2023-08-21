@@ -36,9 +36,9 @@ class AuthService {
             }
         });
     }
-    signup(email, password, fullname) {
+    signup(email, password, fullname, role) {
         return __awaiter(this, void 0, void 0, function* () {
-            const emailExists = yield new user_repository_1.UserRepo().findByEmail(email);
+            const emailExists = yield new user_repository_1.UserRepo().checkEmail(email);
             if (emailExists) {
                 throw new Error("User with this email already exists");
             }
@@ -47,6 +47,7 @@ class AuthService {
             new_user.fullname = fullname;
             new_user.email = email;
             new_user.password = hashedPassword;
+            new_user.role = role || user_model_1.UserRole.USER;
             let final_user = yield new user_repository_1.UserRepo().save(new_user);
             return {
                 user: final_user,

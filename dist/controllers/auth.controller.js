@@ -43,20 +43,21 @@ class AuthController {
     signup(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { email, fullname, password } = req.body;
+                const { email, fullname, password, role } = req.body;
                 if (!email || !fullname || !password) {
                     return res.status(400).json({
                         success: false,
                         message: "Credentials incomplete",
                     });
                 }
-                const { user } = yield new auth_service_1.AuthService().signup(email, password, fullname);
+                const { user } = yield new auth_service_1.AuthService().signup(email, password, fullname, role);
                 return res.status(200).json({
                     success: true,
                     message: "user signup successfull",
                     user: {
                         email: user.email,
                         fullname: user.fullname,
+                        role: user.role,
                     },
                 });
             }

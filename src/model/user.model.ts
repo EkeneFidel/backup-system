@@ -1,4 +1,12 @@
-import { Column, Model, Table, DataType } from "sequelize-typescript";
+import {
+  Column,
+  Model,
+  Table,
+  DataType,
+  IsEmail,
+  IsIn,
+  AllowNull,
+} from "sequelize-typescript";
 
 export enum UserRole {
   USER = "user",
@@ -30,6 +38,7 @@ export class User extends Model {
   })
   fullname!: string;
 
+  @IsEmail
   @Column({
     type: DataType.STRING,
     field: User.USER_EMAIL,
@@ -42,9 +51,9 @@ export class User extends Model {
   })
   password!: string;
 
+  @AllowNull(false)
   @Column({
     type: DataType.ENUM(...Object.values(UserRole)),
-    allowNull: false,
     field: User.USER_ROLE,
     defaultValue: UserRole.USER,
   })

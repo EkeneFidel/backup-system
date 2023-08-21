@@ -32,7 +32,7 @@ class AuthController {
 
   async signup(req: Request, res: Response) {
     try {
-      const { email, fullname, password } = req.body;
+      const { email, fullname, password, role } = req.body;
       if (!email || !fullname || !password) {
         return res.status(400).json({
           success: false,
@@ -43,7 +43,8 @@ class AuthController {
       const { user } = await new AuthService().signup(
         email,
         password,
-        fullname
+        fullname,
+        role
       );
 
       return res.status(200).json({
@@ -52,6 +53,7 @@ class AuthController {
         user: {
           email: user.email,
           fullname: user.fullname,
+          role: user.role,
         },
       });
     } catch (error) {

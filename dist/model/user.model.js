@@ -12,6 +12,8 @@ var User_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = exports.UserRole = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
+const file_model_1 = require("../model/file.model");
+const folder_model_1 = require("../model/folder.model");
 var UserRole;
 (function (UserRole) {
     UserRole["USER"] = "user";
@@ -65,6 +67,14 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], User.prototype, "role", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => file_model_1.File),
+    __metadata("design:type", Array)
+], User.prototype, "files", void 0);
+__decorate([
+    (0, sequelize_typescript_1.HasMany)(() => folder_model_1.Folder),
+    __metadata("design:type", Array)
+], User.prototype, "folders", void 0);
 exports.User = User = User_1 = __decorate([
     (0, sequelize_typescript_1.Table)({
         tableName: User_1.USER_TABLE_NAME,

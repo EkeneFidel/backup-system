@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const user_model_1 = require("../model/user.model");
 const auth_service_1 = require("../services/auth.service");
 class AuthController {
     login(req, res) {
@@ -48,6 +49,12 @@ class AuthController {
                     return res.status(400).json({
                         success: false,
                         message: "Credentials incomplete",
+                    });
+                }
+                if (role && !(role === user_model_1.UserRole.ADMIN || role === user_model_1.UserRole.ADMIN)) {
+                    return res.status(400).json({
+                        success: false,
+                        message: "user role should be admin or user",
                     });
                 }
                 const { user } = yield new auth_service_1.AuthService().signup(email, password, fullname, role);

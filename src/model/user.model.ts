@@ -4,9 +4,12 @@ import {
   Table,
   DataType,
   IsEmail,
-  IsIn,
   AllowNull,
+  HasMany,
 } from "sequelize-typescript";
+
+import { File } from "../model/file.model";
+import { Folder } from "../model/folder.model";
 
 export enum UserRole {
   USER = "user",
@@ -58,4 +61,10 @@ export class User extends Model {
     defaultValue: UserRole.USER,
   })
   role!: UserRole;
+
+  @HasMany(() => File)
+  files!: File[];
+
+  @HasMany(() => Folder)
+  folders!: Folder[];
 }

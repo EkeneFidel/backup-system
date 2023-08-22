@@ -46,7 +46,7 @@ class App {
     syncDatabase() {
         var _a;
         const db = new database_1.default();
-        (_a = db.sequelize) === null || _a === void 0 ? void 0 : _a.sync();
+        (_a = db.sequelize) === null || _a === void 0 ? void 0 : _a.sync({ force: false });
     }
     routes() {
         this.app.route("/").get((req, res) => {

@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { UserRole } from "../model/user.model";
 import { AuthService } from "../services/auth.service";
 
 class AuthController {
@@ -37,6 +38,13 @@ class AuthController {
         return res.status(400).json({
           success: false,
           message: "Credentials incomplete",
+        });
+      }
+
+      if (role && !(role === UserRole.ADMIN || role === UserRole.ADMIN)) {
+        return res.status(400).json({
+          success: false,
+          message: "user role should be admin or user",
         });
       }
 

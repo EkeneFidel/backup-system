@@ -9,6 +9,8 @@ class FileRouter extends BaseRouter {
       Helpers.uploadToS3().single("file"),
       FileController.uploadFile
     );
+    this.router.get("/", FileController.getAllFiles);
+    this.router.get("/download/:id", FileController.getFileById);
   }
 }
 

@@ -18,6 +18,7 @@ export class Folder extends Model {
   public static FOLDER_TABLE_NAME = "folders" as string;
   public static FOLDER_NAME = "name" as string;
   public static FOLDER_ID = "id" as string;
+  public static FOLDER_ETAG = "eTag" as string;
   public static USER_ID = "userId" as string;
 
   @Column({
@@ -33,6 +34,11 @@ export class Folder extends Model {
     field: Folder.FOLDER_NAME,
   })
   name!: string;
+  @Column({
+    type: DataType.STRING(),
+    field: Folder.FOLDER_ETAG,
+  })
+  eTag!: string;
 
   @ForeignKey(() => User)
   @Column({

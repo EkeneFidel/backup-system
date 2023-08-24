@@ -5,6 +5,7 @@ import ErrorHandler from "./utils/errorhandler.util";
 import * as dotenv from "dotenv";
 import AuthRouter from "./routers/auth.router";
 import FileRouter from "./routers/file.router";
+import FolderRouter from "./routers/folder.router";
 import AuthMiddleware from "./middlewares/auth.middleware";
 
 dotenv.config();
@@ -35,7 +36,8 @@ class App {
       res.send("welcome to the backup system");
     });
     this.app.use("/api/v1/auth", AuthRouter);
-    this.app.use("/api/v1/file", AuthMiddleware.verifyToken, FileRouter);
+    this.app.use("/api/v1/files", AuthMiddleware.verifyToken, FileRouter);
+    this.app.use("/api/v1/folders", AuthMiddleware.verifyToken, FolderRouter);
   }
 }
 

@@ -78,6 +78,7 @@ class UserRepo implements UserInterface {
       }
       return false;
     } catch (error) {
+      console.log((error as Error).message);
       throw new ErrorHandler(500, "Internal server error");
     }
   }

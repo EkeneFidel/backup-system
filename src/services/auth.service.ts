@@ -1,6 +1,7 @@
 import { User, UserRole } from "../model/user.model";
-import { UserRepo } from "../repository/user.repository";
-import Authentication from "../utils/auth.utils";
+import UserRepo from "../repository/user.repository";
+import Authentication from "../utils/auth.util";
+import ErrorHandler from "../utils/errorhandler.util";
 
 interface Login {
   user: User;
@@ -21,12 +22,12 @@ interface AuthInterface {
   ): Promise<Signup>;
 }
 
-export class AuthService implements AuthInterface {
+class AuthService implements AuthInterface {
   async login(email: string, password: string): Promise<Login> {
-    const user = await new UserRepo().findByEmail(email);
+    const user = await UserRepo.findByEmail(email);
 
     if (!user) {
-      throw new Error("User not found");
+      throw new ErrorHandler(40, "User not found");
     }
 
     // check password
@@ -42,19 +43,20 @@ export class AuthService implements AuthInterface {
         ),
       };
     } else {
-      throw new Error("Password incorrect");
+      throw new ErrorHandler(401, "Password incorrect");
     }
   }
+
   async signup(
     email: string,
     password: string,
     fullname: string,
     role?: UserRole
   ): Promise<Signup> {
-    const emailExists = await new UserRepo().checkEmail(email);
+    const emailExists = await UserRepo.checkEmail(email);
 
     if (emailExists) {
-      throw new Error("User with this email already exists");
+      throw new ErrorHandler(400, "User with this email already exists");
     }
     const hashedPassword: string = await Authentication.passwordHash(password);
     const new_user = new User();
@@ -63,10 +65,12 @@ export class AuthService implements AuthInterface {
     new_user.password = hashedPassword;
     new_user.role = role || UserRole.USER;
 
-    let final_user = await new UserRepo().save(new_user);
+    let final_user = await UserRepo.save(new_user);
 
     return {
       user: final_user,
     };
   }
 }
+
+export default new AuthService();

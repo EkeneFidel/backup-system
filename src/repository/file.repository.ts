@@ -1,23 +1,23 @@
 import { File } from "../model/file.model";
+import ErrorHandler from "../utils/errorhandler.util";
 
 interface FileInterface {
   save(file: File): Promise<File>;
   getById(fileId: File): Promise<File>;
-  getAll(): Promise<File[]>;
-  // findByEmail(email: string): Promise<File>;
-  // checkEmail(email: string): Promise<Boolean>;
+  getAll(userId: number): Promise<File[]>;
 }
 
-export class FileRepo implements FileInterface {
+class FileRepo implements FileInterface {
   async save(file: File): Promise<File> {
     try {
       let final_file = await File.create({
-        fullname: file.name,
+        name: file.name,
         url: file.url,
+        userId: file.userId,
       });
       return final_file;
     } catch (error) {
-      throw new Error("Failed to create file");
+      throw new ErrorHandler(500, "Internal server error");
     }
   }
 
@@ -30,19 +30,26 @@ export class FileRepo implements FileInterface {
       });
 
       if (!file) {
-        throw new Error("File not found");
+        throw new ErrorHandler(404, "File not found");
       }
 
       return file;
     } catch (error) {
-      throw new Error("File not found");
+      throw new ErrorHandler(500, "Internal server error");
     }
   }
-  async getAll(): Promise<File[]> {
+
+  async getAll(userId: number): Promise<File[]> {
     try {
-      return await File.findAll();
+      return await File.findAll({
+        where: {
+          userId: userId,
+        },
+      });
     } catch (error) {
-      throw new Error("No files found");
+      throw new ErrorHandler(500, "Internal server error");
     }
   }
 }
+
+export default new FileRepo();

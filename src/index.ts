@@ -1,8 +1,11 @@
 import express, { Application, Request, Response } from "express";
-import Database from "./config/database";
+import Database from "./config/database.config";
+import ErrorHandler from "./utils/errorhandler.util";
 
 import * as dotenv from "dotenv";
 import AuthRouter from "./routers/auth.router";
+import FileRouter from "./routers/file.router";
+import AuthMiddleware from "./middlewares/auth.middleware";
 
 dotenv.config();
 const PORT = process.env.PORT as string;
@@ -32,12 +35,25 @@ class App {
       res.send("welcome to the backup system");
     });
     this.app.use("/api/v1/auth", AuthRouter);
+    this.app.use("/api/v1/file", AuthMiddleware.verifyToken, FileRouter);
   }
 }
 
 const port: number = +PORT || 3000;
 const app = new App().app;
 
+app.use(
+  (
+    err: ErrorHandler,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({ success: false, error: err.message });
+  }
+);
+
 app.listen(port, () => {
-  console.log("Server started successfully!");
+  console.log("Server started is running on port ", port);
 });

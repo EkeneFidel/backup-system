@@ -1,4 +1,5 @@
 import { User } from "../model/user.model";
+import ErrorHandler from "../utils/errorhandler.util";
 
 interface UserInterface {
   save(user: User): Promise<User>;
@@ -8,7 +9,7 @@ interface UserInterface {
   checkEmail(email: string): Promise<Boolean>;
 }
 
-export class UserRepo implements UserInterface {
+class UserRepo implements UserInterface {
   async save(user: User): Promise<User> {
     try {
       let final_user = await User.create({
@@ -19,7 +20,7 @@ export class UserRepo implements UserInterface {
       });
       return final_user;
     } catch (error) {
-      throw new Error("Failed to create user");
+      throw new ErrorHandler(500, "Internal server error");
     }
   }
 
@@ -32,19 +33,19 @@ export class UserRepo implements UserInterface {
       });
 
       if (!user) {
-        throw new Error("User not found");
+        throw new ErrorHandler(404, "User not found");
       }
 
       return user;
     } catch (error) {
-      throw new Error("User not found");
+      throw new ErrorHandler(500, "Internal server error");
     }
   }
   async getAll(): Promise<User[]> {
     try {
       return await User.findAll();
     } catch (error) {
-      throw new Error("No users found");
+      throw new ErrorHandler(500, "Internal server error");
     }
   }
   async findByEmail(email: string): Promise<User> {
@@ -56,11 +57,11 @@ export class UserRepo implements UserInterface {
       });
 
       if (!user) {
-        throw new Error("User not found");
+        throw new ErrorHandler(404, "User not found");
       }
       return user;
     } catch (error) {
-      throw new Error("User not found");
+      throw new ErrorHandler(500, "Internal server error");
     }
   }
 
@@ -77,7 +78,9 @@ export class UserRepo implements UserInterface {
       }
       return false;
     } catch (error) {
-      throw new Error("User not found");
+      throw new ErrorHandler(500, "Internal server error");
     }
   }
 }
+
+export default new UserRepo();

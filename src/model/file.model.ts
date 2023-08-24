@@ -19,6 +19,7 @@ export class File extends Model {
   public static FILE_ID = "id" as string;
   public static FILE_URL = "url" as string;
   public static USER_ID = "userId" as string;
+  public static FOLDER_ID = "folderId" as string;
 
   @Column({
     type: DataType.INTEGER,
@@ -43,7 +44,7 @@ export class File extends Model {
   @ForeignKey(() => Folder)
   @Column({
     type: DataType.INTEGER,
-    field: File.USER_ID,
+    field: File.FOLDER_ID,
   })
   folderId!: number;
 

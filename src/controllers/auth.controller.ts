@@ -1,19 +1,17 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { UserRole } from "../model/user.model";
-import { AuthService } from "../services/auth.service";
+import AuthService from "../services/auth.service";
+import ErrorHandler from "../utils/errorhandler.util";
 
 class AuthController {
-  async login(req: Request, res: Response) {
+  async login(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;
 
       if (!email || !password) {
-        return res.status(400).json({
-          success: false,
-          message: "Credentials incomplete",
-        });
+        throw new ErrorHandler(400, "Credentials incomplete");
       }
-      const { user, token } = await new AuthService().login(email, password);
+      const { user, token } = await AuthService.login(email, password);
       return res.status(200).json({
         success: true,
         message: "user login successfull",
@@ -24,31 +22,22 @@ class AuthController {
         token: token,
       });
     } catch (error) {
-      return res.status(500).json({
-        success: false,
-        message: "Internal server error",
-      });
+      next(error);
     }
   }
 
-  async signup(req: Request, res: Response) {
+  async signup(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, fullname, password, role } = req.body;
       if (!email || !fullname || !password) {
-        return res.status(400).json({
-          success: false,
-          message: "Credentials incomplete",
-        });
+        throw new ErrorHandler(400, "Credentials incomplete");
       }
 
       if (role && !(role === UserRole.ADMIN || role === UserRole.ADMIN)) {
-        return res.status(400).json({
-          success: false,
-          message: "user role should be admin or user",
-        });
+        throw new ErrorHandler(400, "user role should be admin or user");
       }
 
-      const { user } = await new AuthService().signup(
+      const { user } = await AuthService.signup(
         email,
         password,
         fullname,
@@ -65,10 +54,7 @@ class AuthController {
         },
       });
     } catch (error) {
-      return res.status(500).json({
-        success: false,
-        message: (error as Error).message,
-      });
+      next(error);
     }
   }
 }

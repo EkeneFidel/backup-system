@@ -2,41 +2,40 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
 import * as dotenv from "dotenv";
+import ErrorHandler from "../utils/errorhandler.util";
 
 dotenv.config();
 
-export const verifyToken = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): any => {
-  if (!req.headers.authorization) {
-    return res.status(401).send("No auth token");
-  }
+class AuthMiddleware {
+  private static secretKey: string =
+    (process.env.JWT_SECRET_KEY as string) || "my-secret-key";
 
-  let secretKey: string = process.env.JWT_SECRET_KEY || "my-secret-key";
-
-  let [tokenType, token] = req.headers?.authorization?.split(" ")[1];
-
-  if (tokenType !== "Bearer") {
-    return res.status(403).json({
-      succes: false,
-      message: "Bearer Token required",
-    });
-  }
-
-  try {
-    const decoded: string | object = jwt.verify(token, secretKey);
-
-    if (!decoded) {
-      return res.status(401).json({
-        succes: false,
-        message: "Invalid Token",
-      });
+  static verifyToken(req: Request, res: Response, next: NextFunction): void {
+    if (!req.headers.authorization) {
+      throw new ErrorHandler(400, "No auth token");
     }
-    req.app.locals.user = decoded;
-    return next();
-  } catch (error) {
-    res.send((error as Error).message);
+
+    const [tokenType, token] = req.headers.authorization.split(" ");
+
+    if (tokenType !== "Bearer") {
+      throw new ErrorHandler(403, "Bearer Token required");
+    }
+
+    try {
+      const decoded: string | object = jwt.verify(
+        token,
+        AuthMiddleware.secretKey
+      );
+
+      if (!decoded) {
+        throw new ErrorHandler(401, "Invalid Token");
+      }
+      req.app.locals.user = decoded;
+      next();
+    } catch (error) {
+      throw new ErrorHandler(500, (error as Error).message);
+    }
   }
-};
+}
+
+export default AuthMiddleware;

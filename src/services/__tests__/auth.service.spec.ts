@@ -1,6 +1,6 @@
 import AuthService from "../auth.service";
 import { UserRole, User } from "../../model/user.model";
-import Database from "../..//config/database.config";
+import Database from "../../config/database.config";
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -14,19 +14,17 @@ afterAll(async () => {
   await db.sequelize?.close();
 });
 
-describe("signup", () => {
+describe("signup service", () => {
   it("should signup and create a user", async () => {
     const payload = {
       email: "admin@gmail.com",
       password: "password",
       fullname: "admin user",
-      role: "admin" as UserRole,
     };
     const user = await AuthService.signup(
       payload.email,
       payload.password,
-      payload.fullname,
-      payload.role
+      payload.fullname
     );
     const userFound = await User.findAll({ where: { email: payload.email } });
     expect(user).not.toBeNull();
@@ -50,7 +48,7 @@ describe("signup", () => {
   });
 });
 
-describe("login", () => {
+describe("login service", () => {
   it("should login user and return a token", async () => {
     const payload = {
       email: "admin@gmail.com",

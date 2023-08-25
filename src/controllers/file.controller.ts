@@ -7,11 +7,7 @@ import ErrorHandler from "../utils/errorhandler.util";
 const upload = multer();
 
 class FileController {
-  async uploadFile(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async uploadFile(req: Request, res: Response, next: NextFunction) {
     try {
       const file = req.file as Express.MulterS3.File;
       if (!file) {
@@ -22,31 +18,23 @@ class FileController {
       }
       let userId = req.app.locals.user.userId;
       const new_file = await FileService.save(file, userId);
-      res.status(201).json({ success: true, file: new_file });
+      return res.status(201).json({ success: true, file: new_file });
     } catch (error) {
       next(error);
     }
   }
 
-  async getAllFiles(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getAllFiles(req: Request, res: Response, next: NextFunction) {
     try {
       let userId = req.app.locals.user.userId;
       let files = await FileService.getAllFiles(userId);
-      res.status(201).json({ success: true, files: files });
+      return res.status(201).json({ success: true, files: files });
     } catch (error) {
       next(error);
     }
   }
 
-  async getFileById(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getFileById(req: Request, res: Response, next: NextFunction) {
     try {
       let userId = req.app.locals.user.userId;
       let { id } = req.params;
@@ -56,7 +44,7 @@ class FileController {
         "Content-Type": fileStream.ContentType || "application/octet-stream",
       });
       fileStream.Body.pipe(res);
-      res.status(201).json({ success: true });
+      return res.status(201).json({ success: true });
     } catch (error) {
       next(error);
     }

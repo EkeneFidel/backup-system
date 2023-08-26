@@ -4,7 +4,7 @@ services:
   postgres:
     image: postgres:15
     ports:
-      - 5432:${POSTGRES_PORT}
+      - 5431:${POSTGRES_PORT}
     volumes:
       - data:/data/db
     environment:
@@ -28,6 +28,8 @@ services:
       - postgres
     environment:
       - PORT=3000
+      - DATABASE_URL=postgres://postgresuser:SaLHA86Nb2Jc7E4bFyNIu9CViaH02rrV@dpg-cjklkedk5scs73a2fqdg-a.oregon-postgres.render.com/backupsystem
+      - NODE_ENV=production
 
 volumes:
   data: {}

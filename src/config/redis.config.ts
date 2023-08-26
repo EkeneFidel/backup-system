@@ -5,7 +5,13 @@ const REDIS_HOST = process.env.REDIS_HOST || "localhost";
 const REDIS_PORT = Number(process.env.REDIS_PORT) || 6379;
 const REDIS_PASSWORD = process.env.REDIS_PASSWORD || "";
 
-const redisClient = createClient();
+const redisClient = createClient({
+  password: REDIS_PASSWORD,
+  socket: {
+    host: REDIS_HOST,
+    port: REDIS_PORT,
+  },
+});
 (async () => {
   await redisClient.connect();
 })();

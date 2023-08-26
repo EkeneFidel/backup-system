@@ -37,7 +37,7 @@ class FileController {
   async getFileHistory(req: Request, res: Response, next: NextFunction) {
     try {
       let { id } = req.params;
-      let files = await FileService.getAllFiles(+id);
+      let files = await FileService.getAllUserFiles(+id);
       return res.status(200).json({ success: true, files: files });
     } catch (error) {
       next(error);

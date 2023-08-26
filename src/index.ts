@@ -1,4 +1,5 @@
 import express, { Application, Request, Response } from "express";
+import helmet from "helmet";
 import Database from "./config/database.config";
 import ErrorHandler from "./utils/errorhandler.util";
 
@@ -22,13 +23,14 @@ class App {
   }
 
   protected middlewares(): void {
+    this.app.use(helmet());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
   }
 
   protected syncDatabase(): void {
     const db = new Database();
-    db.sequelize?.sync({ force: true });
+    db.sequelize?.sync({ force: false });
   }
 
   protected routes(): void {

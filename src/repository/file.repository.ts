@@ -8,6 +8,7 @@ interface FileInterface {
   markUnsafe(id: number): Promise<void>;
   getById(userId: number, fileId: number): Promise<File>;
   getAll(userId: number): Promise<File[]>;
+  getAllForUser(userId: number): Promise<File[]>;
 }
 
 interface GroupedFiles {
@@ -85,6 +86,24 @@ class FileRepo implements FileInterface {
       }
 
       return file;
+    } catch (error) {
+      throw new ErrorHandler(500, (error as Error).message);
+    }
+  }
+
+  async getAllForUser(userId: number): Promise<File[]> {
+    try {
+      return await File.findAll({
+        where: {
+          userId: userId,
+        },
+        include: [
+          {
+            model: User,
+            attributes: ["id", "email"],
+          },
+        ],
+      });
     } catch (error) {
       throw new ErrorHandler(500, (error as Error).message);
     }

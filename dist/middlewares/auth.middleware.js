@@ -22,41 +22,57 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv = __importStar(require("dotenv"));
+const errorhandler_util_1 = __importDefault(require("../utils/errorhandler.util"));
+const user_model_1 = require("../model/user.model");
 dotenv.config();
-const verifyToken = (req, res, next) => {
-    var _a, _b;
-    if (!req.headers.authorization) {
-        return res.status(401).send("No auth token");
-    }
-    let secretKey = process.env.JWT_SECRET_KEY || "my-secret-key";
-    let [tokenType, token] = (_b = (_a = req.headers) === null || _a === void 0 ? void 0 : _a.authorization) === null || _b === void 0 ? void 0 : _b.split(" ")[1];
-    if (tokenType !== "Bearer") {
-        return res.status(403).json({
-            succes: false,
-            message: "Bearer Token required",
+class AuthMiddleware {
+    static verifyToken(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                if (!req.headers.authorization) {
+                    throw new errorhandler_util_1.default(400, "No auth token");
+                }
+                const [tokenType, token] = req.headers.authorization.split(" ");
+                if (tokenType !== "Bearer") {
+                    throw new errorhandler_util_1.default(403, "Bearer Token required");
+                }
+                const decoded = jsonwebtoken_1.default.verify(token, AuthMiddleware.secretKey);
+                if (!decoded) {
+                    throw new errorhandler_util_1.default(401, "Invalid Token");
+                }
+                let user = yield user_model_1.User.findOne({
+                    where: {
+                        id: decoded.userId,
+                        email: decoded.email,
+                    },
+                });
+                if (!user) {
+                    throw new errorhandler_util_1.default(401, "Unathorized user");
+                }
+                req.app.locals.user = decoded;
+                next();
+            }
+            catch (error) {
+                next(error);
+            }
         });
     }
-    try {
-        const decoded = jsonwebtoken_1.default.verify(token, secretKey);
-        if (!decoded) {
-            return res.status(401).json({
-                succes: false,
-                message: "Invalid Token",
-            });
-        }
-        req.app.locals.user = decoded;
-        return next();
-    }
-    catch (error) {
-        res.send(error.message);
-    }
-};
-exports.verifyToken = verifyToken;
+}
+AuthMiddleware.secretKey = process.env.JWT_SECRET_KEY || "my-secret-key";
+exports.default = AuthMiddleware;
 //# sourceMappingURL=auth.middleware.js.map

@@ -16,7 +16,7 @@ class FolderRepo implements FolderInterface {
       });
       return final_folder;
     } catch (error) {
-      throw new ErrorHandler(500, "Internal server error");
+      throw new ErrorHandler(500, (error as Error).message);
     }
   }
 }

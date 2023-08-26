@@ -20,7 +20,7 @@ class UserRepo implements UserInterface {
       });
       return final_user;
     } catch (error) {
-      throw new ErrorHandler(500, "Internal server error");
+      throw new ErrorHandler(500, (error as Error).message);
     }
   }
 
@@ -38,14 +38,14 @@ class UserRepo implements UserInterface {
 
       return user;
     } catch (error) {
-      throw new ErrorHandler(500, "Internal server error");
+      throw new ErrorHandler(404, "User not found");
     }
   }
   async getAll(): Promise<User[]> {
     try {
       return await User.findAll();
     } catch (error) {
-      throw new ErrorHandler(500, "Internal server error");
+      throw new ErrorHandler(404, "Users not found");
     }
   }
   async findByEmail(email: string): Promise<User> {
@@ -61,7 +61,7 @@ class UserRepo implements UserInterface {
       }
       return user;
     } catch (error) {
-      throw new ErrorHandler(500, "Internal server error");
+      throw new ErrorHandler(404, "User not found");
     }
   }
 
@@ -78,8 +78,7 @@ class UserRepo implements UserInterface {
       }
       return false;
     } catch (error) {
-      console.log((error as Error).message);
-      throw new ErrorHandler(500, "Internal server error");
+      throw new ErrorHandler(500, (error as Error).message);
     }
   }
 }

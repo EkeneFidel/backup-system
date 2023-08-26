@@ -18,7 +18,7 @@ class FileRepo implements FileInterface {
       });
       return final_file;
     } catch (error) {
-      throw new ErrorHandler(500, "Internal server error");
+      throw new ErrorHandler(500, (error as Error).message);
     }
   }
 
@@ -37,7 +37,7 @@ class FileRepo implements FileInterface {
 
       return file;
     } catch (error) {
-      throw new ErrorHandler(500, "Internal server error");
+      throw new ErrorHandler(500, (error as Error).message);
     }
   }
 
@@ -55,7 +55,7 @@ class FileRepo implements FileInterface {
         ],
       });
     } catch (error) {
-      throw new ErrorHandler(500, "Internal server error");
+      throw new ErrorHandler(500, (error as Error).message);
     }
   }
 }

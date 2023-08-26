@@ -8,9 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserRepo = void 0;
 const user_model_1 = require("../model/user.model");
+const errorhandler_util_1 = __importDefault(require("../utils/errorhandler.util"));
 class UserRepo {
     save(user) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -24,7 +27,7 @@ class UserRepo {
                 return final_user;
             }
             catch (error) {
-                throw new Error("Failed to create user");
+                throw new errorhandler_util_1.default(500, error.message);
             }
         });
     }
@@ -37,12 +40,12 @@ class UserRepo {
                     },
                 });
                 if (!user) {
-                    throw new Error("User not found");
+                    throw new errorhandler_util_1.default(404, "User not found");
                 }
                 return user;
             }
             catch (error) {
-                throw new Error("User not found");
+                throw new errorhandler_util_1.default(404, "User not found");
             }
         });
     }
@@ -52,7 +55,7 @@ class UserRepo {
                 return yield user_model_1.User.findAll();
             }
             catch (error) {
-                throw new Error("No users found");
+                throw new errorhandler_util_1.default(404, "Users not found");
             }
         });
     }
@@ -65,12 +68,12 @@ class UserRepo {
                     },
                 });
                 if (!user) {
-                    throw new Error("User not found");
+                    throw new errorhandler_util_1.default(404, "User not found");
                 }
                 return user;
             }
             catch (error) {
-                throw new Error("User not found");
+                throw new errorhandler_util_1.default(404, "User not found");
             }
         });
     }
@@ -88,10 +91,10 @@ class UserRepo {
                 return false;
             }
             catch (error) {
-                throw new Error("User not found");
+                throw new errorhandler_util_1.default(500, error.message);
             }
         });
     }
 }
-exports.UserRepo = UserRepo;
+exports.default = new UserRepo();
 //# sourceMappingURL=user.repository.js.map

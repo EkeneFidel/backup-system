@@ -28,7 +28,7 @@ class FileController {
     try {
       let userId = req.app.locals.user.userId;
       let files = await FileService.getAllFiles(userId);
-      return res.status(201).json({ success: true, files: files });
+      return res.status(200).json({ success: true, files: files });
     } catch (error) {
       next(error);
     }
@@ -44,7 +44,7 @@ class FileController {
         "Content-Type": fileStream.ContentType || "application/octet-stream",
       });
       fileStream.Body.pipe(res);
-      return res.status(201).json({ success: true });
+      return res.status(200).json({ success: true });
     } catch (error) {
       next(error);
     }

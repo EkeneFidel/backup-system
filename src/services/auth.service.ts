@@ -27,7 +27,7 @@ class AuthService implements AuthInterface {
     const user = await UserRepo.findByEmail(email);
 
     if (!user) {
-      throw new ErrorHandler(40, "User not found");
+      throw new ErrorHandler(401, "User not found");
     }
 
     // check password

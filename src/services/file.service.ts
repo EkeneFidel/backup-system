@@ -20,7 +20,7 @@ class FileService implements FileInterface {
       let final_file = await FileRepo.save(new_file);
       return final_file;
     } catch (error) {
-      throw new ErrorHandler(500, "Internal server error");
+      throw new ErrorHandler(500, (error as Error).message);
     }
   }
 
@@ -29,16 +29,18 @@ class FileService implements FileInterface {
       const file = await FileRepo.getById(userId, fileId);
       let fileStream = await Helpers.downloadFromS3(file.name);
       return { fileStream, name: file.name };
-    } catch (error) {}
-    throw new ErrorHandler(500, "Internal server error");
+    } catch (error) {
+      throw new ErrorHandler(500, (error as Error).message);
+    }
   }
 
   async getAllFiles(userId: number): Promise<File[]> {
     try {
       const files = await FileRepo.getAll(userId);
       return files;
-    } catch (error) {}
-    throw new ErrorHandler(500, "Internal server error");
+    } catch (error) {
+      throw new ErrorHandler(500, (error as Error).message);
+    }
   }
 }
 

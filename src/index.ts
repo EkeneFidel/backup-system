@@ -52,10 +52,12 @@ app.use(
     next: express.NextFunction
   ) => {
     const statusCode = err.statusCode || 500;
-    res.status(statusCode).json({ success: false, error: err.message });
+    res.status(statusCode).json({ success: false, message: err.message });
   }
 );
 
-app.listen(port, () => {
+let server = app.listen(port, () => {
   console.log("Server started is running on port ", port);
 });
+
+export { app, server };

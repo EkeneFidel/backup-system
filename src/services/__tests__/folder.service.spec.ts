@@ -1,6 +1,5 @@
 import * as dotenv from "dotenv";
 import FolderService from "../folder.service";
-import AuthService from "../auth.service";
 import { Folder } from "../../model/folder.model";
 import { UserRole, User } from "../../model/user.model";
 import Database from "../../config/database.config";
@@ -22,26 +21,21 @@ afterAll(async () => {
   };
   const s3 = new S3();
   const command = new DeleteObjectCommand(params);
-  const data = await s3.client.send(command);
+  await s3.client.send(command);
   await db.sequelize?.close();
 });
 
 describe("Create Folder", () => {
   it("should create a folder in the s3", async () => {
     const payload = {
-      email: "admin@gmail.com",
+      email: "test@gmail.com",
       password: "password",
-      fullname: "admin user",
-      role: "admin" as UserRole,
+      fullname: "test user",
+      role: "user" as UserRole,
     };
-    const user = await AuthService.signup(
-      payload.email,
-      payload.password,
-      payload.fullname,
-      payload.role
-    );
+    const user = await User.create(payload);
 
-    await FolderService.save("test-folder", user.user.id);
+    await FolderService.save("test-folder", user.id);
     const folder = await Folder.findOne({ where: { name: "test-folder" } });
     expect(folder).not.toBeNull();
   });

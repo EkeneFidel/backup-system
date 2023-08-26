@@ -17,9 +17,9 @@ afterAll(async () => {
 describe("signup service", () => {
   it("should signup and create a user", async () => {
     const payload = {
-      email: "admin@gmail.com",
+      email: "test@gmail.com",
       password: "password",
-      fullname: "admin user",
+      fullname: "test user",
     };
     const user = await AuthService.signup(
       payload.email,
@@ -32,10 +32,10 @@ describe("signup service", () => {
   });
   it("should throw an error if user is already registered", async () => {
     const payload = {
-      email: "admin@gmail.com",
+      email: "test@gmail.com",
       password: "password",
-      fullname: "admin user",
-      role: "admin" as UserRole,
+      fullname: "test user",
+      role: "user" as UserRole,
     };
     await expect(
       AuthService.signup(
@@ -51,7 +51,7 @@ describe("signup service", () => {
 describe("login service", () => {
   it("should login user and return a token", async () => {
     const payload = {
-      email: "admin@gmail.com",
+      email: "test@gmail.com",
       password: "password",
     };
     const user = await AuthService.login(payload.email, payload.password);
@@ -60,7 +60,7 @@ describe("login service", () => {
   });
   it("should throw an error when password is incorrect", async () => {
     const payload = {
-      email: "admin@gmail.com",
+      email: "test@gmail.com",
       password: "password1",
     };
     await expect(
@@ -69,7 +69,7 @@ describe("login service", () => {
   });
   it("should throw an error when the user tries to login with an unregistered email", async () => {
     const payload = {
-      email: "admin1@gmail.com",
+      email: "test1@gmail.com",
       password: "password",
     };
     await expect(

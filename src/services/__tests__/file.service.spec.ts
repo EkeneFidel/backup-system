@@ -2,7 +2,6 @@ import * as dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
 import FileService from "../file.service";
-import AuthService from "../auth.service";
 import { File } from "../../model/file.model";
 import { UserRole, User } from "../../model/user.model";
 import Database from "../../config/database.config";
@@ -44,29 +43,24 @@ afterAll(async () => {
   };
   const s3 = new S3();
   const command = new DeleteObjectCommand(params);
-  const data = await s3.client.send(command);
+  await s3.client.send(command);
   await db.sequelize?.close();
 });
 
 describe("Save File", () => {
   it("should save file in the db", async () => {
     const payload = {
-      email: "admin@gmail.com",
+      email: "test@gmail.com",
       password: "password",
-      fullname: "admin user",
-      role: "admin" as UserRole,
+      fullname: "test user",
+      role: "user" as UserRole,
     };
-    const user = await AuthService.signup(
-      payload.email,
-      payload.password,
-      payload.fullname,
-      payload.role
-    );
+    const user = await User.create(payload);
     const file = await uploadFileToS3();
     file.key = "test-file.txt";
     file.location = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${file.key}`;
 
-    const savedFile = await FileService.save(file, user.user.id);
+    const savedFile = await FileService.save(file, user.id);
     const fileFound = await File.findAll({ where: { name: file.key } });
     expect(savedFile).not.toBeNull();
     expect(fileFound).not.toBeNull();
@@ -79,7 +73,7 @@ describe("Download File", () => {
   it("should download a file from the s3 bucket", async () => {
     const user = await User.findOne({
       where: {
-        email: "admin@gmail.com",
+        email: "test@gmail.com",
       },
     });
     const file = await File.findOne({

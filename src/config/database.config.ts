@@ -26,6 +26,10 @@ class Database {
       this.sequelize = new Sequelize(this.DATABASE_URL, {
         dialect: "postgres",
         logging: false,
+        dialectOptions: {
+          ssl: true,
+          native: true,
+        },
         models: [User, Folder, File],
       });
     } else {

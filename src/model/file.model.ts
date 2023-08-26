@@ -18,6 +18,8 @@ export class File extends Model {
   public static FILE_NAME = "name" as string;
   public static FILE_ID = "id" as string;
   public static FILE_URL = "url" as string;
+  public static FILE_TYPE = "type" as string;
+  public static FILE_SAFE_STATUS = "isSafe" as string;
   public static USER_ID = "userId" as string;
   public static FOLDER_ID = "folderId" as string;
 
@@ -40,6 +42,19 @@ export class File extends Model {
     field: File.FILE_URL,
   })
   url!: string;
+
+  @Column({
+    type: DataType.STRING(),
+    field: File.FILE_TYPE,
+  })
+  type!: string;
+
+  @Column({
+    type: DataType.BOOLEAN(),
+    field: File.FILE_SAFE_STATUS,
+    defaultValue: true,
+  })
+  isSafe!: boolean;
 
   @ForeignKey(() => Folder)
   @Column({

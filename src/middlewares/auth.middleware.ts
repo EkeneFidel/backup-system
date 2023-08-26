@@ -59,6 +59,30 @@ class AuthMiddleware {
       next(error);
     }
   }
+
+  static async checkIsAdmin(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const user = req.app.locals.user;
+      let user_data = await User.findOne({
+        where: {
+          id: user.userId,
+          email: user.email,
+        },
+      });
+
+      if (user_data?.role === "admin") {
+        next();
+      } else {
+        throw new ErrorHandler(401, "User is not an admin");
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default AuthMiddleware;

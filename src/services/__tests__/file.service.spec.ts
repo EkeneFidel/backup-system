@@ -6,7 +6,8 @@ import { File } from "../../model/file.model";
 import { UserRole, User } from "../../model/user.model";
 import Database from "../../config/database.config";
 import S3 from "../../config/s3.config";
-import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import Helpers from "../../helpers/file.helper";
 
 dotenv.config();
 
@@ -37,13 +38,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  const params = {
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: "test-file.txt",
-  };
-  const s3 = new S3();
-  const command = new DeleteObjectCommand(params);
-  await s3.client.send(command);
+  await Helpers.deleteFileFromS3("test-file.txt");
   await db.sequelize?.close();
 });
 

@@ -1,11 +1,9 @@
 import request from "supertest";
-import path from "path";
 import { app, server } from "../../index";
-import S3 from "../../config/s3.config";
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import Authentication from "../../utils/auth.util";
 import UserRepo from "../../repository/user.repository";
 import { User } from "../../model/user.model";
+import Helpers from "../../helpers/file.helper";
 
 let token: string;
 let folderName: string = "test-folder/";
@@ -13,13 +11,7 @@ let shouldPerformCleanup = false;
 
 afterEach(async () => {
   if (shouldPerformCleanup) {
-    const params = {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: folderName,
-    };
-    const s3 = new S3();
-    const command = new DeleteObjectCommand(params);
-    await s3.client.send(command);
+    await Helpers.downloadFromS3(folderName);
   }
 });
 

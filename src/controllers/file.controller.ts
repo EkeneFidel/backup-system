@@ -34,6 +34,25 @@ class FileController {
     }
   }
 
+  async getFileHistory(req: Request, res: Response, next: NextFunction) {
+    try {
+      let { id } = req.params;
+      let files = await FileService.getAllFiles(+id);
+      return res.status(200).json({ success: true, files: files });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getAllFileHistory(req: Request, res: Response, next: NextFunction) {
+    try {
+      let files = await FileService.getAllFileHistory();
+      return res.status(200).json({ success: true, files: files });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getFileById(req: Request, res: Response, next: NextFunction) {
     try {
       let userId = req.app.locals.user.userId;
@@ -44,7 +63,21 @@ class FileController {
         "Content-Type": fileStream.ContentType || "application/octet-stream",
       });
       fileStream.Body.pipe(res);
-      return res.status(200).json({ success: true });
+      return res
+        .status(200)
+        .json({ success: true, message: "File downloaded" });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async markFileUnSafe(req: Request, res: Response, next: NextFunction) {
+    try {
+      let { id } = req.params;
+      await FileService.makUnsafe(+id);
+      return res
+        .status(200)
+        .json({ success: true, message: "File marked unsafe" });
     } catch (error) {
       next(error);
     }

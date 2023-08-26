@@ -3,8 +3,7 @@ import FolderService from "../folder.service";
 import { Folder } from "../../model/folder.model";
 import { UserRole, User } from "../../model/user.model";
 import Database from "../../config/database.config";
-import S3 from "../../config/s3.config";
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import Helpers from "../../helpers/file.helper";
 
 dotenv.config();
 
@@ -15,13 +14,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  const params = {
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: "test-folder/",
-  };
-  const s3 = new S3();
-  const command = new DeleteObjectCommand(params);
-  await s3.client.send(command);
+  await Helpers.deleteFileFromS3("test-folder/");
   await db.sequelize?.close();
 });
 

@@ -164,7 +164,6 @@ describe("Test mark file unsafe route", () => {
     const response = await request(app)
       .patch(`/api/v1/files/mark-unsafe/${savedFileId}`)
       .set("Authorization", `Bearer ${token}`);
-    console.log(response);
     expect(response.statusCode).toBe(200);
     expect(response.body.message).toBe("File marked unsafe");
     await expect(FileRepo.getById(savedUserId, savedFileId)).rejects.toThrow();

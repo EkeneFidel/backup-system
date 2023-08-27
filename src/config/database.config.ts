@@ -32,7 +32,7 @@ class Database {
           ssl: true,
           native: true,
         },
-        models: [User, Folder, File],
+        models: [User, Folder, File, Reviews, Admin],
       });
     } else {
       this.sequelize = new Sequelize({

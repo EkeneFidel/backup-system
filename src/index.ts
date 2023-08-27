@@ -30,7 +30,7 @@ class App {
 
   protected syncDatabase(): void {
     const db = new Database();
-    db.sequelize?.sync({ force: true });
+    db.sequelize?.sync({ force: false });
   }
 
   protected routes(): void {

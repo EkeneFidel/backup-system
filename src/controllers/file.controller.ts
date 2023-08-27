@@ -74,7 +74,8 @@ class FileController {
   async markFileUnSafe(req: Request, res: Response, next: NextFunction) {
     try {
       let { id } = req.params;
-      await FileService.makUnsafe(+id);
+      let userId = req.app.locals.user.userId;
+      await FileService.makUnsafe(+id, userId);
       return res
         .status(200)
         .json({ success: true, message: "File marked unsafe" });

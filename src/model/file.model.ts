@@ -5,10 +5,14 @@ import {
   DataType,
   BelongsTo,
   ForeignKey,
+  HasMany,
+  BelongsToMany,
 } from "sequelize-typescript";
 
 import { User } from "../model/user.model";
+import { Admin } from "./admin.model";
 import { Folder } from "./folder.model";
+import { Reviews } from "./review.model";
 
 @Table({
   tableName: File.FILE_TABLE_NAME,
@@ -19,7 +23,6 @@ export class File extends Model {
   public static FILE_ID = "id" as string;
   public static FILE_URL = "url" as string;
   public static FILE_TYPE = "type" as string;
-  public static FILE_SAFE_STATUS = "isSafe" as string;
   public static USER_ID = "userId" as string;
   public static FOLDER_ID = "folderId" as string;
 
@@ -49,13 +52,6 @@ export class File extends Model {
   })
   type!: string;
 
-  @Column({
-    type: DataType.BOOLEAN(),
-    field: File.FILE_SAFE_STATUS,
-    defaultValue: true,
-  })
-  isSafe!: boolean;
-
   @ForeignKey(() => Folder)
   @Column({
     type: DataType.INTEGER,
@@ -65,6 +61,15 @@ export class File extends Model {
 
   @BelongsTo(() => Folder)
   folder!: Folder;
+
+  @Column({ defaultValue: 0 })
+  reviewCount!: number;
+
+  @HasMany(() => Reviews)
+  reviews!: Reviews[];
+
+  @BelongsToMany(() => Admin, () => Reviews)
+  reviewAdmins!: Admin[];
 
   @ForeignKey(() => User)
   @Column({

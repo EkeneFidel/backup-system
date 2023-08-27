@@ -6,7 +6,7 @@ import redisClient from "../config/redis.config";
 
 interface FileInterface {
   save(file: Express.MulterS3.File, userId: number): Promise<File>;
-  makUnsafe(fileId: number): Promise<void>;
+  makUnsafe(fileId: number, userId: number): Promise<void>;
   downloadFile(userId: number, fileId: number): any;
   getAllFiles(userId: number): Promise<File[]>;
 }
@@ -30,14 +30,14 @@ class FileService implements FileInterface {
     }
   }
 
-  async makUnsafe(fileId: number): Promise<void> {
+  async makUnsafe(fileId: number, userId: number): Promise<void> {
     try {
       let file = await File.findByPk(fileId);
-      let userId = file?.userId;
-      await redisClient.del(`files:${userId}`);
-      await redisClient.del(`file-history:${userId}`);
+      let ownerId = file?.userId;
+      await redisClient.del(`files:${ownerId}`);
+      await redisClient.del(`file-history:${ownerId}`);
       await redisClient.del(`file-history:all`);
-      await FileRepo.markUnsafe(fileId);
+      await FileRepo.markUnsafe(fileId, userId);
       return;
     } catch (error) {
       throw new ErrorHandler(500, (error as Error).message);

@@ -3,6 +3,8 @@ import * as dotenv from "dotenv";
 import { User } from "../model/user.model";
 import { File } from "../model/file.model";
 import { Folder } from "../model/folder.model";
+import { Reviews } from "../model/review.model";
+import { Admin } from "../model/admin.model";
 
 dotenv.config();
 
@@ -41,7 +43,7 @@ class Database {
         port: this.POSTGRES_PORT,
         dialect: "postgres",
         logging: false,
-        models: [User, Folder, File],
+        models: [User, Folder, File, Reviews, Admin],
       });
     }
     await this.sequelize

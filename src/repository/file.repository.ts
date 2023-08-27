@@ -1,3 +1,4 @@
+import { Admin } from "../model/admin.model";
 import Helpers from "../helpers/file.helper";
 import { File } from "../model/file.model";
 import { User } from "../model/user.model";
@@ -5,7 +6,7 @@ import ErrorHandler from "../utils/errorhandler.util";
 
 interface FileInterface {
   save(file: File): Promise<File>;
-  markUnsafe(id: number): Promise<void>;
+  markUnsafe(id: number, userId: number): Promise<void>;
   getById(userId: number, fileId: number): Promise<File>;
   getAll(userId: number): Promise<File[]>;
   getAllForUser(userId: number): Promise<File[]>;
@@ -31,14 +32,35 @@ class FileRepo implements FileInterface {
     }
   }
 
-  async markUnsafe(fileId: number): Promise<void> {
+  async markUnsafe(fileId: number, userId: number): Promise<void> {
     try {
       let file = await File.findByPk(fileId);
+      let admin = await Admin.findOne({
+        where: {
+          userId: userId,
+        },
+      });
       if (file) {
         if (file.type === "video" || file.type === "image") {
-          file.isSafe = false;
-          Helpers.deleteFileFromS3(file.name);
-          await file.destroy();
+          const existingMark = await file.$get("reviews", {
+            where: { adminId: admin?.id },
+          });
+
+          // Check if admin has already marked this file as unsafe
+          if (existingMark.length > 0) {
+            return; // Admin has already marked this file as unsafe
+          }
+
+          // Mark the file as unsafe and associate the admin marking it
+          await file.$add("reviewAdmins", admin!.id);
+          file.reviewCount += 1;
+          if (file.reviewCount >= 3) {
+            // Delete the file if marked by 3 unique admins
+            await file.destroy();
+          } else {
+            await file.save();
+          }
+
           return;
         } else {
           throw new ErrorHandler(

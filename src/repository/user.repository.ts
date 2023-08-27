@@ -1,3 +1,4 @@
+import { Admin } from "../model/admin.model";
 import { User } from "../model/user.model";
 import ErrorHandler from "../utils/errorhandler.util";
 
@@ -18,6 +19,11 @@ class UserRepo implements UserInterface {
         password: user.password,
         role: user.role,
       });
+      if (user.role === "admin") {
+        await Admin.create({
+          userId: final_user.id,
+        });
+      }
       return final_user;
     } catch (error) {
       throw new ErrorHandler(500, (error as Error).message);
